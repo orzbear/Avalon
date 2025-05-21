@@ -66,6 +66,7 @@ Get ready...
 
         elif player.party == "bad":
             if player.role == "Oberon":
+
                 print("You are Oberon and do not know your teammates.")
             else:
                 teammates = [p.name for p in game.players if p.party == "bad" and p.name != player.name and p.role != "Oberon"]
@@ -129,7 +130,8 @@ Bad Roles:
         print("Selected team:", [player.name for player in selected_team])
         
         # Voting phase
-        game.voting_team(selected_team)
+        if not game.voting_team():
+            continue
 
         # Quest phase
         game.voting_quest(selected_team)

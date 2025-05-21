@@ -144,7 +144,7 @@ class Game:
             self.bad_win = True
             return True
     
-    def voting_team(self):
+    def voting_team(self) -> bool:
         """
         Vote on the selected team for the quest.
         """
@@ -172,14 +172,14 @@ class Game:
             self.leader_index = (self.leader_index + 1) % len(self.players)
             self.players[self.leader_index].leader = True
             self.players[(self.leader_index - 1) % len(self.players)].leader = False
-            return 
+            return True
         else:
             print("Team rejected. A new team must be selected.")
 
             self.leader_index = (self.leader_index + 1) % len(self.players)
             self.players[self.leader_index].leader = True
             self.players[(self.leader_index - 1) % len(self.players)].leader = False
-            return 
+            return False
 
     
     def voting_quest(self, team):
