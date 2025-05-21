@@ -64,7 +64,6 @@ class Game:
             player.set_role(role)
             player.set_party(self.role_party_map[role])
 
-        print("Roles assigned to players.")
     
     def assign_leader(self):
         """
@@ -136,7 +135,7 @@ class Game:
             target = self.assassin_phase()
             if target.role == "Merlin":
                 self.bad_win = True
-                print("Bad team wins!")
+                print("Evil team wins!")
                 return True
             else:
                 self.good_win = True
@@ -145,7 +144,7 @@ class Game:
             self.bad_win = True
             return True
     
-    def voting_team(self) -> bool:
+    def voting_team(self):
         """
         Vote on the selected team for the quest.
         """
@@ -173,17 +172,14 @@ class Game:
             self.leader_index = (self.leader_index + 1) % len(self.players)
             self.players[self.leader_index].leader = True
             self.players[(self.leader_index - 1) % len(self.players)].leader = False
-            return True
+            return 
         else:
             print("Team rejected. A new team must be selected.")
-            self.team_failures += 1
-            if self.team_failures == 5:
-                print("Bad team wins!")
-                self.bad_win = True
+
             self.leader_index = (self.leader_index + 1) % len(self.players)
             self.players[self.leader_index].leader = True
             self.players[(self.leader_index - 1) % len(self.players)].leader = False
-            return False
+            return 
 
     
     def voting_quest(self, team):
@@ -198,7 +194,7 @@ class Game:
             while vote.lower() not in ['y', 'n']:
                 print("Invalid vote. Please vote 'y' or 'n'.")
                 vote = input(f"{player.name}, do you approve the quest? If you are in the good side, you must vote for y (y/n): ")
-            # clear_screen()
+            clear_screen()
             if vote.lower() == 'n':
                 quest_failed = True
 

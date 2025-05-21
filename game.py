@@ -6,19 +6,44 @@ import game_logic
 def main():
     # Start of the game
     """Main entry point for the game."""
-    print("Welcome to the game!")
-    players = []
-    num_players = int(input("Enter the number of players (5-10): "))
+    print("""
+=== Welcome to Avalon ===
 
-    if num_players < 5 or num_players > 10:
-        print("Invalid number of players. Please enter a number between 5 and 10.")
-        return
+Avalon is a game of deception and deduction.
+
+Each round:
+- A leader proposes a team to go on a quest.
+- All players vote to approve or reject the team.
+- If approved, the quest team secretly votes to succeed or fail the quest.
+- The good team wins if 3 quests succeed.
+- The evil team wins if 3 quests fail.
+- If 3 quests succeed, the Assassin gets one chance to guess who Merlin is — if correct, evil wins!
+
+Get ready...
+
+""")
+
+
+    players = []
+    while True:
+        num_input = input("Enter the number of players (5–10): ")
+        if not num_input.isdigit():
+            print("Invalid input. Please enter a number.")
+            continue
+        num_players = int(num_input)
+        if 5 <= num_players <= 10:
+            break
+        else:
+            print("Invalid number of players. Please enter a number between 5 and 10.")
+
+    
     for i in range(num_players):
         name = input(f"Enter the name of player {i + 1}: ")
         players.append(name)
     
     game = game_logic.Game(players)
     game.assign_roles()
+
     print("Roles have been assigned.")
     print("\nEach player can now check their own role.\n")    
     for player in game.players:
@@ -48,32 +73,34 @@ def main():
                 print(", ".join(teammates) if teammates else "You are the only visible evil player.")
 
         input("\nPress Enter to continue...")
-        #clear_screen()
+        clear_screen()
 
 
     print("""
-            === Avalon Role Overview ===
-            Good Roles:
-            - Merlin: Knows who the bad players are but must stay hidden.
-            - Percival: Knows who Merlin is (or at least two suspects if Morgana is in play).
-            - Loyal Servant: Regular good player.
+=== Avalon Role Overview ===
+Good Roles:
+- Merlin: Knows who the bad players are but must stay hidden.
+- Percival: Knows who Merlin is (or at least two suspects if Morgana is in play).
+- Loyal Servant: Regular good player.
 
-            Bad Roles:
-            - Assassin: Tries to find and kill Merlin at the end.
-            - Morgana: Appears as Merlin to Percival.
-            - Mordred: Hidden from Merlin.
-            - Oberon: Does not know the other bad players.
+Bad Roles:
+- Assassin: Tries to find and kill Merlin at the end.
+- Morgana: Appears as Merlin to Percival.
+- Mordred: Hidden from Merlin.
+- Oberon: Does not know the other bad players.
 
             """)
+    
+    # role reveal for testing
 
-    for player in game.players:
-        if player.party == "good" or player.role == "Oberon":
-            # Good players and Oberon can see their own role
-            print(f"{player.name} is a {player.role}. {player.party} party")
-        else:
-            evil = [p.name for p in game.players if p.party == "bad" ]
-            print(f"Evil players: {', '.join(evil)}")
-            print(f"{player.name} is a {player.role}. {player.party} party")
+    # for player in game.players:
+    #     if player.party == "good" or player.role == "Oberon":
+    #         # Good players and Oberon can see their own role
+    #         print(f"{player.name} is a {player.role}. {player.party} party")
+    #     else:
+    #         evil = [p.name for p in game.players if p.party == "bad" ]
+    #         print(f"Evil players: {', '.join(evil)}")
+    #         print(f"{player.name} is a {player.role}. {player.party} party")
 
 
     # Game loop
@@ -92,6 +119,7 @@ def main():
             elif check.lower() == "check role":
                 name = input("Enter your name to check your role: ")
                 game.check_roles(name)
+                clear_screen()
             else:
                 break
 
@@ -101,16 +129,7 @@ def main():
         print("Selected team:", [player.name for player in selected_team])
         
         # Voting phase
-        if game.voting_team():
-            print("Team approved!")
-            game.team_failures = 0
-        else:
-            print("Team rejected!")
-            game.team_failures += 1
-            if game.team_failures == 5:
-                game.bad_win = True
-                break
-            continue
+        game.voting_team(selected_team)
 
         # Quest phase
         game.voting_quest(selected_team)
@@ -127,7 +146,12 @@ def main():
     if game.good_win:
         print("Good team wins!")
     elif game.bad_win:
-        print("Bad team wins!")
+        print("Evil team wins!")
+    
+    print("\n=== Final Roles ===")
+    for player in game.players:
+        print(f"{player.name} — {player.role} ({player.party})")
+
 
 
 if __name__ == "__main__":
